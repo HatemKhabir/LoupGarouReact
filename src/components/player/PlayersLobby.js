@@ -14,13 +14,16 @@ export default function PlayersLobby({ playerName, gameId, seeMyCard }) {
   const [gamePlayers, setGamePlayers] = useState([]);
   const [gameRoles, setGameRoles] = useState([]);
   const [allplayersJoined, setAllplayersJoined] = useState(false);
-
+  const {gameDetails}=useContext(GameContext)
   useEffect(() => {
+    console.log(gameDetails)
     getGameRoles();
     getGamePlayers();
   }, [gameId]);
 
   useEffect(() => {
+    console.log(gameDetails)
+    console.log(localStorage.getItem("gameObject"))
     setAllplayersJoined(gameRoles.length === gamePlayers.length);
   }, [gamePlayers, gameRoles]);
 

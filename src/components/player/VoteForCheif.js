@@ -15,14 +15,12 @@ export default function VoteForCheif() {
   const [votingSession, setVotingSession] = useState({});
   const [isVoted, setIsVoted] = useState(false);
   const {gameDetails, updateGameDetails}=useContext(GameContext)
-  const [playerDetails,setPlayerDetails]=useContext(GameContext)
-  useEffect(() => {
-    getGamePlayers();
-    getCurrentVotingSession();
-  }, []);
+  const {playerDetails,setPlayerDetails}=useContext(GameContext)
+  const gameId = gameDetails? gameDetails.gameId : "defaultGameId"
 
-  const {gameId} = gameDetails;
-
+  useEffect(()=>{
+    console.log("vote for chief gameDetails",gameDetails)
+  })
   const getGamePlayers = async () => {
     if (gameId !== null) {
       const res = await apiCalls.getGamePlayers(gameId);
@@ -31,34 +29,38 @@ export default function VoteForCheif() {
         const players = res.data;
         console.log(players);
         setPlayersList(players);
-      }
-    }
-  };
-
-  const getCurrentVotingSession = async () => {
-    if (gameId !== null) {
+        }
+        }
+        };
+        
+        const getCurrentVotingSession = async () => {
+          if (gameId !== null) {
       const res = await apiCalls.getCurrentVotingSession(gameId);
       
       if (!res.error) {
         const votingSession = res.data;
         console.log(votingSession);
         setVotingSession(votingSession);
-      }
-    }
-  };
-
-  const handleVote = async (targetId, name) => {
-    const voterId = playerDetails.playerId;
-    const req = DTOs.createVoteRequest(voterId, targetId, votingSession.votingSessionId);
-    const res = await apiCalls.createVote(req);
-    if (!res.error) {
-      const vote = res.data;
-      console.log(vote);
-      setIsVoted(true);
-    }
-  };
-  return (
-    <>
+        }
+        }
+        };
+        
+        const handleVote = async (targetId, name) => {
+          const voterId = playerDetails.playerId;
+          const req = DTOs.createVoteRequest(voterId, targetId, votingSession.votingSessionId);
+          const res = await apiCalls.createVote(req);
+          if (!res.error) {
+            const vote = res.data;
+            console.log(vote);
+            setIsVoted(true);
+            }
+            };
+              useEffect(() => {
+                getGamePlayers();
+                getCurrentVotingSession();
+              }, []);
+            return (
+              <>
       {!isVoted && (
         <>
           <Typography align="center" variant="h3" sx={{ mb: 3 }}>

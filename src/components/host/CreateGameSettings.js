@@ -63,6 +63,7 @@ export default function CreateGameSettings({createdGame}) {
       const game = res.data;
       console.log(game);
       updateGameDetails(game)
+      console.log(gameDetails)
       localStorage.setItem("gameObject", JSON.stringify(game));
       createdGame(game);      
       setError(false);

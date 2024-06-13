@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const url = 'https://localhost:7074';
- const url = 'https://loupgarou.azurewebsites.net';
+const url = 'https://localhost:7074';
+// const url = 'https://loupgarou.azurewebsites.net';
 
 export default class apiCalls {
   
@@ -127,7 +127,7 @@ export default class apiCalls {
 
   static getGame = async (gameId) => {
     try {
-      const response = await axios.get(`${url}/api/games/${gameId}`);
+      const response = await axios.get(`${url}/api/games/code/${gameId}`);
       return { data: response.data, error: null };
     } catch (e) {
       console.log(e);

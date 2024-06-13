@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Grid, TextField, Switch } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import GameContext from '../../contexts/GameContext';
 import apiCalls from '../../apiCalls';
 
 // ----------------------------------------------------------------------
@@ -12,8 +13,8 @@ export default function PlayerJoiningForm({ returnedPlayer }) {
   const [name, setName] = useState('');
   const [gameID, setGameID] = useState('');
   const [valid, setValid] = useState(true);
-
-  const handleNameChange = (e) => {
+  const {gameDetails, updateGameDetails}=useContext(GameContext)
+    const handleNameChange = (e) => {
     setName(e.target.value);
   };
   const handleGameIdChange = (e) => {
@@ -32,8 +33,8 @@ export default function PlayerJoiningForm({ returnedPlayer }) {
       };
 
       const res = await apiCalls.addPlayer(req);
-
-      if (res.error) {
+      const game=await apiCalls.getGame(gameID);
+      if (res.error) {  
         console.log(res.error);
         setError(true);
         if (res.error.code === 'ERR_BAD_REQUEST' || res.error.code === 'ERR_NOT_FOUND') {
@@ -42,6 +43,8 @@ export default function PlayerJoiningForm({ returnedPlayer }) {
           setErrorMessage('Unable to connect to the server.');
         }
       } else {
+        console.log("game",game)
+        updateGameDetails(game.data)
         const player = res.data;
         console.log(player);
         setError(false);
@@ -49,7 +52,9 @@ export default function PlayerJoiningForm({ returnedPlayer }) {
       }
     }
   };
-
+useEffect(()=>{
+console.log("join player game deatils",gameDetails)
+},[gameDetails])
   return (
     <>
       <Grid container spacing={3}>
