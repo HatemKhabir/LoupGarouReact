@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { Stack, Container, Button } from '@mui/material';
@@ -9,6 +9,7 @@ import StartGameIntro from '../components/game/StartGameIntro';
 import { PlayerNightAction, PlayerSleeping, PostNightAnnouncements } from '../components/game';
 import { TextWidget, InitialStepper, VotingPlayersGrid } from '../components';
 import DayPhase from '../components/game/DayPhase';
+import GameContext from '../contexts/GameContext';
 // ----------------------------------------------------------------------
 
 
@@ -17,11 +18,22 @@ export default function PlayerGame() {
   const [light, setLight] = useState(false);
   const [voted, setVoted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const {gameDetails}=useContext(GameContext)
   const steps = ['GetReady','Intro', 'Salvador', 'Loups', 'Sorciere', 'Announcements', 'Day', 'Vote'];
-  
+  const [salvadorRole,setSalvadorRole]=useState(gameDetails.roles.some(role=>role.card.cardName.toLowerCase()==='salvador'));
+  const [sorciereRole,setSorciereRole]=useState(gameDetails.roles.some(role=>role.card.cardName.toLowerCase()==='sorciere'));
+
   const handleNext = (e) => {
     e.preventDefault();
-    setCurrentStep(currentStep + 1);
+    console.log(gameDetails)
+    console.log(salvadorRole)
+    console.log(gameDetails.roles)
+
+    let nextStep = currentStep + 1;
+    if (currentStep === 1 && !salvadorRole) {
+      nextStep = currentStep + 2; 
+    }
+    setCurrentStep(nextStep);
     if (currentStep === 5) {
       console.log('Day');
       setLight(true);
@@ -87,7 +99,7 @@ export default function PlayerGame() {
               <PlayerSleeping />
             </>
           )}
-          {currentStep === 2 && (
+          {currentStep === 2 && salvadorRole && (
             <>
               <PlayerNightAction voted={handleVote} card="Salvador" />
             </>
@@ -97,7 +109,7 @@ export default function PlayerGame() {
               <PlayerNightAction voted={handleVote} card="Loup" />
             </>
           )}
-          {currentStep === 4 && (
+          {currentStep === 4 && sorciereRole && (
             <>
               <PlayerNightAction voted={handleVote} card="Sorciere" />
             </>

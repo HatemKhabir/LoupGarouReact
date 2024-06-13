@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import useSound from 'use-sound';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
@@ -28,6 +28,7 @@ import { TextWidget, InitialStepper, CreateGameSettings } from '../components';
 // components
 import Iconify from '../components/iconify';
 import DayPhase from '../components/game/DayPhase';
+import GameContext from '../contexts/GameContext';
 // ----------------------------------------------------------------------
 
 export default function StartGamePage() {
@@ -35,6 +36,9 @@ export default function StartGamePage() {
   const [light, setLight] = React.useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const steps = ['GetReady', 'Intro', 'Salvador', 'Loups', 'Sorciere', 'Announcements', 'Day', 'Vote'];
+  const {gameDetails}=useContext(GameContext)
+  const [salvadorRole,setSalvadorRole]=useState(gameDetails.roles.some(role=>role.card.cardName.toLowerCase()==='salvador'));
+  const [sorciereRole,setSorciereRole]=useState(gameDetails.roles.some(role=>role.card.cardName.toLowerCase()==='sorciere'));
   const currentSound = `/assets/sounds/${steps[currentStep + 1]}.m4a`;
   const [playSound, { stop }] = useSound(currentSound);
 
@@ -42,7 +46,14 @@ export default function StartGamePage() {
     stop(); // Not working yet
     e.preventDefault();
     playSound();
-    setCurrentStep(currentStep + 1);
+
+    let nextStep = currentStep + 1;
+
+    // Skip the Salvador step if salvadorRole is false and current step is 2 (Salvador's step)
+    if (currentStep === 1 && !salvadorRole) {
+      nextStep = currentStep + 2; 
+    }
+    setCurrentStep(nextStep);
     console.log(currentSound);
     if (currentStep === 5) {
       console.log('Day');
